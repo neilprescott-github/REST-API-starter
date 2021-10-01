@@ -17,11 +17,16 @@ describe('GET requests', () => {
 
 });
 
-// TEST THE REST API ENDPOINT FOR PUT
+// TEST THE REST API ENDPOINT FOR POST
 describe('CREATE request', () => {
     
     test('CREATE product test', async () => {
-	// TEST IN HERE
+        const res = await request(app).post('/product/create').send({
+            name: "name",
+            description: "desc",
+            price: 25.99
+        });
+        expect(res.statusCode).toBe(201);
     });
 
 });
@@ -29,8 +34,13 @@ describe('CREATE request', () => {
 // UNIT TEST THE PRODUCT BUILDER
 describe('Unit Tests', () => {
 
+    let obj = {
+        name: "name",
+        description: "desc",
+        price: 25.99
+    };
     test('product object builder', () => {
-        // TEST IN HERE
+        expect(productBuilder("name", "desc", 25.99)).toEqual(obj);
     });
 
 });
