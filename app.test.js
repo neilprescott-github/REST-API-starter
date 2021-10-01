@@ -28,7 +28,7 @@ describe('CREATE request', () => {
 
 // TEST THE REST API ENDPOINT FOR GET
 describe('GET requests', () => {
-    test('GET product/read endpoint, expect 200', async () => {
+    test('GET products/read endpoint, expect 200', async () => {
         const res = await request(app).get('/product/read');
         expect(res.statusCode).toBe(200);
     });
@@ -65,9 +65,32 @@ describe('GET requests', () => {
     test('GET product/read endpoint, expect 200 and updated details', async () => {
         const res = await request(app).get('/product/read');
         expect(res.statusCode).toBe(200);
-        expect(res.body[0].name).toBe(objUpdate.name);
-        expect(res.body[0].description).toBe(objUpdate.description);
-        expect(res.body[0].price).toBe(objUpdate.price);
+        expect(res.body[0]).toStrictEqual(objUpdate);
+    });
+});
+
+// READ BY ID
+describe('GET request by ID', () => {
+    test('GET product/read endpoint, expect 200 and updated details', async () => {
+        const res = await request(app).get(`/product/read/${objUpdate._id}`);
+        expect(res.statusCode).toBe(200);
+        expect(res.body[0]).toStrictEqual(objUpdate);
+    });
+});
+
+// DELETE BY ID
+describe('DELETE request by ID', () => {
+    test('DELETE product/delete endpoint, expect 202 and then a get fails', async () => {
+        const res = await request(app).delete(`/product/delete/${objUpdate._id}`);
+        expect(res.statusCode).toBe(202);
+    });
+});
+// NOW THE GET SHOULD FAIL
+describe('GET request by ID', () => {
+    test('GET product/read endpoint, expect 200 and updated details', async () => {
+        const res = await request(app).get(`/product/read/${objUpdate._id}`);
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toStrictEqual([]);
     });
 });
 
