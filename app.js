@@ -14,14 +14,12 @@ app.use(bodyParser.urlencoded({
 
 //function to build product
 productBuilder = (productName, productDescription, productPrice) => {
-    // use JSON to outline product
-    let product =  { 
+    // return the product - no need to construct it first it can be immediately returned
+    return { 
         name : productName,
         description : productDescription,
         price : productPrice
     };
-    // return the product
-    return product;
 };
 
 // CREATE - RESTful POST
@@ -34,7 +32,7 @@ app.post(`/product/create`, (req, res) => {
     let product = productBuilder(req.body.name, req.body.description, req.body.price);
 
     // insert into Database with 'insert'
-    db.insert(product, (err, product) => {
+    db.insert(product, (err, newProduct) => {
 
         // if error, send a response containing the error message
         if (err) res.send(err);
@@ -44,7 +42,7 @@ app.post(`/product/create`, (req, res) => {
 
         // log the product to the console
         log(`Created a new product:\n`);
-        log(product);
+        log(newProduct);
 
     });
 
