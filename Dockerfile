@@ -9,6 +9,6 @@ RUN npm install
 # Copy the app files
 COPY ./*.js ./
 # State the listening port for the container. 
-EXPOSE 8080
+EXPOSE 5000
 # Run 'python app.py' on container start-up. This is the main process.
 ENTRYPOINT ["npm", "start"]
