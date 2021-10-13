@@ -10,5 +10,5 @@ RUN npm install
 COPY ./*.js ./
 # State the listening port for the container. 
 EXPOSE 5000
-# Run 'python app.py' on container start-up. This is the main process.
+# Run 'npm start' on container start-up. This is the main process.
 ENTRYPOINT ["npm", "start"]
