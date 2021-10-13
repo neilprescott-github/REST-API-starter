@@ -1,14 +1,14 @@
 pipeline{
         agent any
         stages{
-            stage('Make Directory'){
+            stage('Test'){
                 steps{
-                    sh "mkdir ~/jenkins-tutorial-test"
+                    sh "npm test"
                 }
             }
-            stage('Make Files'){
+            stage('Build'){
                 steps{
-                    sh "touch ~/jenkins-tutorial-test/file1 ~/jenkins-tutorial-test/file2"
+                    sh "npm build ."
                 }
             }
         }
