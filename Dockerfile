@@ -1,5 +1,5 @@
 # node image
-FROM node:14
+FROM node:14-alpine
 # Create app directory
 WORKDIR /usr/src/app
 # Copy the package files into the image working directory
