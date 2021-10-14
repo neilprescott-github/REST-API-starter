@@ -8,6 +8,8 @@ COPY ./package*.json ./
 RUN npm install
 # Copy the app files
 COPY ./*.js ./
+#Set up port env var
+ENV PORT=5000
 # State the listening port for the container. 
 EXPOSE 5000
 # Run 'python app.py' on container start-up. This is the main process.
