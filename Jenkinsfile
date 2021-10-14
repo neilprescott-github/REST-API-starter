@@ -18,7 +18,7 @@ pipeline{
             }
             stage('Build docker image'){
                 steps{
-                    sh "docker build -t restapp-neil-image:v2 ."
+                    sh "docker build -t restapp-neil-image:v${BUILD_ID} ."
                 }
             }
         }
