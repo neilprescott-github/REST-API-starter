@@ -13,7 +13,7 @@ npm build ~/exercises/REST-API-starter/ || handleError "NPM Build failed" $?
 docker build -t restapp-neil-iamge:v1 ~/exercises/REST-API-starter/ || handleError "Docker Build failed" $?
 
 #-Modify your application.
-echo 'Adding in something new' > ~/exercises/REST-API-starter/newfile.txt || handleError "echo/file creat failede" $?
+echo 'Adding in something new' > ~/exercises/REST-API-starter/newfile.txt || handleError "echo/file create failed" $?
 
 #-Generate new Docker image of an application.
 docker build -t restapp-neil-image:v2 ~/exercises/REST-API-starter/ || handleError "Docker Build failed" $?
