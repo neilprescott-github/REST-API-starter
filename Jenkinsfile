@@ -18,7 +18,12 @@ pipeline{
             }
             stage('Build docker image'){
                 steps{
-                    sh "docker build -t restapp-neil-image:v${BUILD_ID} ."
+                    sh "docker build . -t gcr.io/training-325404/gcp-restapp-neil-image:v${BUILD_ID}"
+                }
+            }
+            stage('Push docker image'){
+                steps{
+                    sh "docker push gcr.io/training-325404/gcp-restapp-neil-image:v${BUILD_ID}"
                 }
             }
         }
