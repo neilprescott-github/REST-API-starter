@@ -15,7 +15,7 @@ pipeline{
                 steps{
                     sh "npm build ."
                 }
-            }           }
+            }
             stage('Build docker image'){
                 steps{
                     sh "docker build -t restapp-neil-image:v2 ."
