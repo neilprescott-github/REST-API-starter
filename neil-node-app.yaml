@@ -9,7 +9,7 @@ spec:
   ports:
   - protocol: TCP
     port: 80
-    targetPort: 5000
+    targetPort: 6000
   type: LoadBalancer
 ---
 apiVersion: apps/v1
@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: neil-restapp-container
-        image: gcr.io/training-325404/gcp-restapp-neil-image:v24
+        image: gcr.io/training-325404/gcp-restapp-neil-image:v25
         ports:
         - name: http-port
-          containerPort: 5000
+          containerPort: 6000
