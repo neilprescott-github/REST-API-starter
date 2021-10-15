@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: neil-restapp-container
-        image: gcr.io/training-325404/gcp-restapp-neil-image:23
+        image: gcr.io/training-325404/gcp-restapp-neil-image:v24
         ports:
         - name: http-port
           containerPort: 5000
