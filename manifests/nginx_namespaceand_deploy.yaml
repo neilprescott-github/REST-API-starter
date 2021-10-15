@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-team
+  labels:
+    team: nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    team: nginx
+    app: nginx
+  namespace: nginx-team
+spec:
+  selector:
+    matchLabels:
+      app: nginx                #This can be any label
+  template:
+    metadata:
+      labels:
+        app: nginx              #This is what the selector matches on
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80

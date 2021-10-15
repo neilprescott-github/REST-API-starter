@@ -1,0 +1,13 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: nginx-team
+  labels:
+    team: nginx
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: apache-team
+  labels:
+    team: apache
