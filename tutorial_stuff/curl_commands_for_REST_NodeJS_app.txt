@@ -1,0 +1,30 @@
+
+export NODE_PORT=80
+export NODE_IP=35.228.221.219
+#POST (Create)
+curl -s -H "Content-Type:application/json" \
+ -X POST \
+ http://${NODE_IP}:${NODE_PORT}/product/create \
+ -d'{"name":"Name", "description": "description", "price": 25.99}'
+
+curl -s -H "Content-Type:application/json" \
+ -X POST \
+ http://${NODE_IP}:${NODE_PORT}/product/create \
+ -d'{"name":"Name 2", "description": "description 2", "price": 0.99}'
+
+#Get all
+curl -s -X GET http://${NODE_IP}:${NODE_PORT}/product/read
+
+#Get one (replace last _id with an ID of an existing record):
+curl -s -X GET http://${NODE_IP}:${NODE_PORT}/product/read/ \
+_id
+
+#Update (replace last _id with an ID of an existing record):
+curl -s -H "Content-Type:application/json" \
+ -d '{"name":"new name", "description":"new description", "price":99.99}' \
+ -X PUT http://${NODE_IP}:${NODE_PORT}/product/update/ \
+_id
+
+#Remove (replace last _id with an ID of an existing record):
+curl -s -X DELETE http://${NODE_IP}:${NODE_PORT}/product/delete/ \
+_id

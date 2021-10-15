@@ -1,0 +1,93 @@
+#8. Push a Docker image from a Jenkins server to the GCP GCR registry
+#Goals:
+#-Modify your existing Jenkins pipeline to publish Docker images into GCP GCR registry on every commit.
+
+Tasks:
+#-Create a GCP IAM service account for the Jenkins.
+#Ensure principle of least privilege - just push/pull
+#In dashboard IAM & Admin->Service Accounts
+#name:neil-jenkins-gcr
+#Grab the email
+#Desc: Giving Jenkins permission to access GCR
+#Create & continue
+#Go to grant section
+#type Ccontainer in filter then select Container Registry Service Agent
+#type storage ad in filter then select Storage Admin
+#could add condition i.e. when - we do not need conditions we want it all the time
+#Click Continue
+#if policy out of date keep cancel thren Continue until this disappears
+#skip grant users - useful for set up for a short time for instance
+#Click Done
+#Select the user - it has no keys at the moment
+#Hit three doits & manage keys
+#Click Add key->Create new Key -> JSON
+#Save to local machine
+
+#-Register the service account credentials in Jenkins secrets.
+#jenkins secrets - add to jenkins
+#or authenticate as jenkins user using JSOMN - my preferred choice as pipe set up and nothing stored
+#run the below oas Jenkins 
+#copy the key file to the VM
+#options
+#-ssh
+#-scp
+#-use Google feature to upload - preferred
+#compute emngibe->VM Instances->neil instance->SSH
+#switch to jenkins user
+sudo su - jenkins
+#use settigs cog to upload the file
+#gcloud auth activate-service-account neil-jenkins-gcr@training-325404.iam.gserviceaccount.com --key-file ../neil_prescott/training-325404-ee43c7b21400.json 
+#email is now inthe JSON no need to edd it
+gcloud auth activate-service-account --key-file ../neil_prescott/training-325404-ee43c7b21400.json 
+gcloud auth configure-docker
+#remove the file
+rm training-325404-ee43c7b21400.json
+
+#-Extend your existing Jenkins pipeline to push Docker image it has built into GCP GCR registry using the service account credentials saved in the Jenkins instance.
+#make and be in branch
+git checkout -b add-docker-push
+
+####Jenkinsfile
+pipeline{
+        agent any
+        stages{
+            stage('Install npm'){
+                steps{
+                    sh "npm install"
+                }
+            }
+            stage('Test'){
+                steps{
+                    sh "npm test"
+                }
+            }
+            stage('Build node app'){
+                steps{
+                    sh "npm build ."
+                }
+            }
+            stage('Build docker image'){
+                steps{
+                    sh "docker build . -t gcr.io/training-325404/gcp-restapp-neil-image:v${BUILD_ID}"
+                }
+            }
+            stage('Push docker image'){
+                steps{
+                    sh "docker push gcr.io/training-325404/gcp-restapp-neil-image:v${BUILD_ID}"
+                }
+            }
+        }
+}
+####end
+
+#Now commit the changes
+git add --all
+git commit -m "NP: Added docker push Jenkinsfile"
+git push
+git push --set-upstream origin add-docker-push
+
+#Accept the pull request on github
+#move to main
+git checkout main
+#delete branch
+git branch -d add-docker-push

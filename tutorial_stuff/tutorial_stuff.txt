@@ -1,0 +1,241 @@
+initial Jenkins admin password:vxhfghghfh (VM)
+vxfghfghfgh (container)
+neilprescott password: vxhfghghfg
+
+neil.prescott@qa-lbg-mep.online usual
+
+sonar
+xvfhcgf
+
+token:cxjjgfjgfj
+
+sonar-scanner \
+  -Dsonar.projectKey=first-project \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=http://35.205.191.186:9000 \
+  -Dsonar.login=xvjtvjxt
+
+
+bug fixes from SonarQube feedback:
+changed product builder to immediatley return the object rather than construct an object and return the object
+changed insert to use a new object for the new object rather than overwrite the existing inserted one
+
+docker logs myapp
+
+# Use Python 3.6 or later as a base image
+FROM  python:3.6
+# Copy contents into image
+COPY . .
+# Install pip dependencies from requirements
+RUN pip install Flask==1.1.2
+# Set YOUR_NAME environment variable
+ENV YOUR_NAME="Neil Prescott"
+# Expose the correct port
+EXPOSE 5000
+# Create an entrypoint
+ENTRYPOINT ["python", "app.py"]
+
+#Build the flash server image
+docker build -t flash .
+
+#Run the flask image on the network ny-network
+docker run -d --network my-network --name myflask flask
+
+#Run NGINX using the VM nginx.conf file
+docker run -d --network my-network --mount type=bind,source=$(pwd)/nginx.conf,target=/etc/nginx/nginx.conf -p 80:80 --name nginx nginx:alpine
+
+#See the web output
+curl localhost
+
+Postgress pw: btdjutybfiyubf
+connection: training-325404:us-central1:mydatabase
+
+
+gcloud container clusters create demo-cluster-neil --num-nodes=2 --machine-type=n1-standard-1 --zone=europe-north1-a     
+gcloud container clusters get-credentials demo-cluster-neil --zone=europe-north1-a
+
+
+#Build from YAML manifest
+kubectl apply -f nginx.yaml
+#Show running pods
+kubectl get pods
+#Describe the ngnix pod
+kubectl describe pod nginx
+#Log on to the pod
+kubectl exec -it nginx-pod sh #deprecated
+kubectl exec --stdin --tty nginx-pod -- /bin/bash
+#Remove the pod
+kubectl delete -f nginx.yaml
+
+#MySQL image 
+#Get the version of mysql that we need
+docker pull mysql:5.7
+
+#Edit the YAML manifest
+vi mysql.yaml
+#####mysql.yaml contents########
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysql-pod
+  labels:
+    database: mysql
+spec:
+  containers:
+  - name: mysql-container
+    image: mysql:5.7
+    env:
+      - name: MYSQL_ROOT_PASSWORD
+        value: "pwd"
+      - name: MYSQL_DATABASE
+        value: "dbname"
+#####mysql.yaml contents end ########
+
+#Create the pod running the mysql instance
+kubectl create -f mysql.yaml
+
+#list the pods to show OK
+kubectl get pods
+
+#Check the logs for the container
+kubectl logs mysql-pod
+
+#Log onto the mysql server
+kubectl exec --stdin --tty mysql-pod -- /bin/bash
+
+#Remove the pod
+kubectl delete -f mysql.yaml
+
+#Describe a service - shows delectors etc.
+kubectl describe service [servivename]
+
+#Have a service YAML and a pod YAML linokied by name  - service will then search for new stuiff linoked by name
+
+Here's an example of a Deployment using selectors to group Pods by the label app: nginx:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:       # This is the label is being selected by the Deployment,
+      app: nginx       # meaning any Pod with this label is part of this Deployment spec
+  replicas: 3
+  template:            
+    metadata:
+      labels:
+        app: nginx     # This label must match what is specified in the selector
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - name: http-port
+          containerPort: 80
+
+We could then create a Service with the following configuration that associates each Pod in the above Deployment with the Service:
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+spec:
+  selector:            # This selector references the label in the Pod
+    app: nginx         # template spec for the Deployment
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+#You can then change the replicas and see them go up/down :)
+
+
+#Namespaces
+#Create two teams
+kubectl create ns nginx-team
+kubectl create ns apache-team
+
+#Crreate pods in each namespace
+kubectl create deployment --image nginx --namespace nginx-team nginx
+kubectl create deployment --image httpd --namespace apache-team httpd
+
+#See default deployment - will return empty
+kubectl get deployments
+
+#Now look at individual namepaces - should show one pod in each
+kubectl get deployments --namespace nginx-team
+kubectl get deployments --namespace apache-team
+
+#Delete the namedspoaces - all will go and running pods will stop & go too
+kubectl delete ns nginx-team apache-team
+
+#Now do via manifesy
+vi nginx_and_apache_ns.yaml
+
+#####nginx_and_apache_ns.yaml
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: nginx-team
+  labels:
+    team: nginx
+---
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: apache-team
+  labels:
+    team: apache
+#####end
+
+#Create the namespaces using the manifest
+kubectl apply -f nginx_and_apache_ns.yaml
+#deploy again
+kubectl create deployment --image nginx --namespace nginx-team nginx
+kubectl create deployment --image httpd --namespace apache-team httpd
+#get deployments per namespace
+kubectl get deployments --namespace apache-team
+kubectl get deployments --namespace nginx-team
+#clean up again
+kubectl delete ns nginx-team apache-team
+
+#Create namepsace and pod in one manifext
+###YAML content
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-team
+  labels:
+    team: nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  labels:
+    team: nginx
+    app: nginx
+  namespace: nginx-team
+spec:
+  selector:
+    matchLabels:
+      app: nginx                #This can be any label
+  template:
+    metadata:
+      labels:
+        app: nginx              #This is what the selector matches on
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx
+        ports:
+        - containerPort: 80
+####END
+
+
+
+##Clear out untagged images (remove or delete unused objects or data)
+docker system prune

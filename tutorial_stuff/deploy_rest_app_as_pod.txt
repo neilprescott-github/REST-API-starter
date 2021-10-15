@@ -1,0 +1,63 @@
+###Attempt REST app
+######Dockerfile contents####
+# node image
+FROM node:14
+# Create app directory
+WORKDIR /usr/src/app
+# Copy the package files into the image working directory
+COPY ./package*.json ./
+# Execute a node install command using
+RUN npm install
+# Copy the app files
+COPY ./*.js ./
+# State the listening port for the container.
+EXPOSE 5000
+# Run 'npm start' on container start-up. This is the main process.
+ENTRYPOINT ["npm", "start"]
+######Dockerfile contents end####
+
+#Build the image
+#docker build -t restapp-neil:v1 .
+docker build -t gcr.io/training-325404/restapp-neil:v1 .
+#docker tag restapp-neil gcr.io/training-325404/restapp-neil:v1
+docker push gcr.io/training-325404/restapp-neil:v1
+
+###restapp.yaml#####
+apiVersion: v1
+kind: Pod
+metadata:
+  name: restapp-pod
+  labels:
+    app: restapp
+spec:
+  containers:
+  - name: restapp-container
+    image: gcr.io/training-325404/restapp-neil:v1
+    ports:
+    - containerPort: 5000
+###end content of restapp.yaml####
+
+#Build the pod
+#kubectl create -f restapp.yaml
+kubectl apply -f restapp.yaml
+#list the pods to show OK
+kubectl get pods
+kubectl get all -o wide
+
+
+
+#######SAVED
+apiVersion: v1
+kind: Pod
+metadata:
+  name: restapp-pod
+  labels:
+    app: restapp
+spec:
+  containers:
+  - name: restapp-container
+    image: gcr.io/training-325404/restapp-neil:v1
+    ports:
+    - containerPort: 5000
+---
+####END

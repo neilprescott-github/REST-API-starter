@@ -1,0 +1,33 @@
+#2. Creating build scripts in Bash
+#Goals:
+#-Demonstrate how to create a Bash script which automates the build process and dockerisation of your application.
+#-Understand how to make your application build repeatable.
+
+#Tasks:
+#-Create a bash script which perform the following tasks:
+
+#!/bin/bash
+
+#exit on any error
+set -e
+
+handleError() {
+        msg=$1
+        rc=$2
+        echo "ERROR detected - message: '${msg}' code i{$ra}c"
+        exit $rc
+}
+
+echo "What version would you like the image to be?"
+read version
+
+dir=~/exercises/REST-API-starter/
+
+cd $dir || handleError "change directory failed" $?
+
+npm install || handleError "NPM install failed" $?
+
+npm build ${dir} || handleError "NPM Build failed" $?
+
+#-Build Docker image of your application.
+docker build -t restapp-neil-iamge:${version} ${dir} || handleError "Docker Build failed" $?
