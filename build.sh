@@ -13,7 +13,7 @@ handleError() {
 echo "What version would you like the image to be?"
 read version
 
-dir=~/exercises/REST-API-starter/
+dir=~/projects/REST-API-starter/
 image="restapp-neil-iamge"
 
 cd $dir || handleError "change directory failed" ${PIPESTATUS[0]}
