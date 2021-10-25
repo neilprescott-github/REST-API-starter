@@ -16,18 +16,18 @@ read version
 dir=~/exercises/REST-API-starter/
 image="restapp-neil-iamge"
 
-cd $dir || handleError "change directory failed" $?
+cd $dir || handleError "change directory failed" ${PIPESTATUS[0]}
 
-npm install || handleError "NPM install failed" $?
+npm install || handleError "NPM install failed" ${PIPESTATUS[0]}
 
-npm build ${dir} || handleError "NPM Build failed" $?
+npm build ${dir} || handleError "NPM Build failed" ${PIPESTATUS[0]}
 
 
 #-Build Docker image of your application.
-docker build -t ${image}:${version} ${dir} || handleError "Docker Build failed" $?
+docker build -t ${image}:${version} ${dir} || handleError "Docker Build failed" ${PIPESTATUS[0]}
 
 #-Modify your application.
-echo 'Adding in something new' > ${dir}/newfile.txt || handleError "echo or file create failed" $?
+echo 'Adding in something new' > ${dir}/newfile.txt || handleError "echo or file create failed" ${PIPESTATUS[0]}
 
 #-Generate new Docker image of an application.
-docker build -t ${image}:${version} ${dir} || handleError "Docker Build failed" $?
+docker build -t ${image}:${version} ${dir} || handleError "Docker Build failed" ${PIPESTATUS[0]}
