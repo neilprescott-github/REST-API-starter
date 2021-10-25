@@ -15,9 +15,12 @@
 #Firstly set up git
 git config --global user.email "github@ggggg.com"
 git config --global user.name "lklllll-github"
+
+git clone git@github.com:neilprescott-github/REST-API-starter.git
+#move to app foldercd 
+REST-API-starter.git
 #To allow push:
 git remote set-url origin git@github.com:neilprescott-github/REST-API-starter.git
-git clone git@github.com:neilprescott-github/REST-API-starter.git
 
 #-Create a Dockerfile for the application you created in the Sprint 1 of the project.
 ####Dockerfile
@@ -32,9 +35,9 @@ RUN npm install
 # Copy the app files
 COPY ./*.js ./
 # State the listening port for the container. 
-EXPOSE 5000
+EXPOSE 6000
 #Add pprt var
-ENV PORT=5000
+ENV PORT=6000
 # Run 'npm start' on container start-up. This is the main process.
 ENTRYPOINT ["npm", "start"]
 ####end
@@ -46,12 +49,12 @@ docker build -t restapp-neil-image:v1 .
 #-Run your application image locally using Docker to verify that your Dockerfile is correct.
 cd ~/REST-API-starter/
 #set PORT env var
-export PORT=5000
+export PORT=6000
 #npm start
 #with logs detached (-t)
-docker -d -p 5000:5000 run restapp-neil-image:v1
+docker run -d -p 6000:6000 restapp-neil-image:v1
 
-export NODE_PORT=5000
+export NODE_PORT=6000
 export NODE_IP=localhost
 #POST (Create)
 curl -s -H "Content-Type:application/json" \
