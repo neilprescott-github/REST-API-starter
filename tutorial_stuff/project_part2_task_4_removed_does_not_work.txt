@@ -1,0 +1,69 @@
+#I will use the Google Shell & Jenkins
+####****Jenkins dopes not work well in containers - it needs a dedicated app so use the VM that we built
+####****move on to #!!!!!!!!!!!!!!Get crumb error - use original Jenkins GCP server
+####jenkins.yaml
+#Create a load balancer type to forward traffic
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-loadbalancer
+spec:
+  selector:              # This selector references the label in the Pod
+    app: jenkins-pod     # template spec for the Deployment
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins-deployment
+  labels:
+    app: jenkins-pod
+spec:
+  selector:
+    matchLabels:             # This is the label is being selected by the Deployment,
+      app: jenkins-pod       # meaning any Pod with this label is part of this Deployment spec
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jenkins-pod     # This label must match what is specified in the selector
+    spec:
+      containers:
+      - name: jenkins-container
+        image: jenkins/jenkins:lts-alpine
+        ports:
+        - name: http-port
+          containerPort: 8080
+####end
+
+#Start the Jenkins pos:
+kubectl apply -f jenkins.yaml
+
+#Wait for the external IP then open up the URL in the browser
+kubectl get services
+#wait for the external IP to how an IP - it may take a minute or so
+
+#enter the initial password - get it by:
+#get the pod name:
+kubectl get pods
+
+#Then use this name to cat the password (change the pod name to that from above)
+kubectl exec --stdin --tty jenkins-deployment-787ffd8565-nqhdz -- cat /var/jenkins_home/secrets/initialAdminPassword
+
+#Go to the external URL and us ethe poassword form the cat command above
+#Select default
+#username:neilprescott
+#password:
+#full name:Neil Prescott
+#email-address:jenkins.lbg.tutorial@neilprescott.com
+#then gives:
+#Jenkins URL: http://35.228.221.219/
+
+#-Initialize a basic Jenkins configuration.
+#done above
+
+#!!!!!!!!!!!!!!Get crumb error - use original Jenkins GCP server

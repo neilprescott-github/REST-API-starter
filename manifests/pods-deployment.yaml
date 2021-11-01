@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx-deployment
+spec:
+  selector:
+    matchLabels:       # This is the label is being selected by the Deployment,
+      app: nginx-pod   # meaning any Pod with this label is part of this Deployment spec
+  replicas: 3
+  template:            # defines what th epod should look like - everything below just like a pod
+    metadata:
+      labels:
+        app: nginx-pod # This label must match what is specified in the selector
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx    # No tag means use :latest
+        ports:
+        - name: http-port       #The name of the post - there can be many
+          containerPort: 80

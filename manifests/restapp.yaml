@@ -1,0 +1,36 @@
+#Create a load balancer type to forward traffic
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-loadbalancer
+spec:
+  selector:              # This selector references the label in the Pod
+    app: restapp-pod     # template spec for the Deployment
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 5000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restapp-deployment
+  labels:
+    app: restapp-pod
+spec:
+  selector:
+    matchLabels:             # This is the label is being selected by the Deployment,
+      app: restapp-pod       # meaning any Pod with this label is part of this Deployment spec
+  replicas: 2
+  template:            
+    metadata:
+      labels:
+        app: restapp-pod     # This label must match what is specified in the selector
+    spec:
+      containers:
+      - name: restapp-container
+        image: gcr.io/training-325404/restapp-neil:v1
+        ports:
+        - name: http-port
+          containerPort: 5000

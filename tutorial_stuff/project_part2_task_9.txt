@@ -1,0 +1,43 @@
+#9. Creating GCP cluster
+#Goals:
+#-Install kubectl to communicate with a Kubernetes cluster.
+#-Create GCP cluster that you will use to run your application.
+
+#Tasks:
+#-Install kubectl tool on your local machine.
+# on the Jenkins VM:
+# download
+curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+# make executable (user & gropu other nothing)
+chmod ug+x,o= kubectl
+# install binary in to your PATH
+sudo mv ./kubectl /usr/local/bin/kubectl 
+
+#-Create new GKE cluster using the GCP web console or the gcloud command line.
+#authorise
+gcloud auth login
+#follow streps to get code & apply it
+
+gcloud container clusters create neil-cluster --num-nodes=2 --machine-type=n1-standard-1 --zone=europe-north1-a
+#Check it has been created
+gcloud container clusters describe neil-cluster --zone=europe-north1-a
+
+#-New cluster should have at least 2 compute nodes.
+#as above
+
+#-Use gcloud command line tool to authenticate your local kubectl against your cluster.
+#Update the config file
+#This will create, or update, the ~/.kube/config file, which will allow us to interact with the Kubernetes API later on.
+gcloud container clusters get-credentials neil-cluster --zone=europe-north1-a
+
+#-Verify that you can connect to GKE cluster using kubectl.
+kubectl get services
+#should show ClusterIP:
+NAME         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.35.240.1   <none>        443/TCP   4m10s
+kubectl get nodes
+#should show the 2 nodes
+
+NAME                                          STATUS   ROLES    AGE   VERSION
+gke-neil-cluster-default-pool-54d6b50d-2lpw   Ready    <none>   12m   v1.20.10-gke.301
+gke-neil-cluster-default-pool-54d6b50d-3pz5   Ready    <none>   12m   v1.20.10-gke.301

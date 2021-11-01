@@ -1,0 +1,53 @@
+#3. Configuration of an application
+#Goals:
+#-Know how to configure your application according to the 12 Factor configuration approach.
+#-Take advantage of immutable deployments.
+#-Understand how environment variables can be used to configure your application in an immutable deployment manner.
+
+#Tasks:
+#-Modify your Product Catalog Node application to optionally listen to TCP port specified in a PORT environment variable.
+#-If PORT environment variable is empty, default a port value to the port 5000. (the || 5000 below does that)
+####start.js
+const app = require('./app').app;
+
+const PORT = process.env.PORT || 5000;
+
+// app listener
+app.listen(PORT, () => {
+    console.log(`API Listening on http://localhost:${PORT}`);
+});
+####end
+
+#-Run your application locally as a Docker container but use a Docker environment variable to specify the port (for example run the application listening to the port 8081).
+#Added ENV section to Dockerfile
+####Dockerfile
+# node image
+FROM node:14
+# Create app directory
+WORKDIR /usr/src/app
+# Copy the package files into the image working directory
+COPY ./package*.json ./
+# Execute a node install command using
+RUN npm install
+# Copy the app files
+COPY ./*.js ./
+# State the listening port for the container. 
+EXPOSE 5000
+#env vars needed
+ENV PORT="6000"
+# Run 'npm start' on container start-up. This is the main process.
+ENTRYPOINT ["npm", "start"]
+####end
+
+docker build -t restapp-neil-image:v2 ~/exercises/REST-API-starter/
+
+#With env var
+export PORT=6000
+docker run -d -p 6000:6000 restapp-neil-image:v2
+
+#With env on command line (anD a name!)
+docker run -d -e PORT=6000 -p 6000:6000 --name restapp-container restapp-neil-image:v2
+
+#Rely on Dockerfile
+unset PORT
+docker run -d -p6000:6000 --name restapp-container restapp-neil-image:v2

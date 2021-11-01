@@ -1,0 +1,26 @@
+#7. Publishing a Docker image of your application into GCP GCR
+#Goals:
+#-Know how to publish an image of your application to a remote GCP image registry.
+#-Understand how to share a container image with others in your team.
+
+#Tasks:
+#-Push the Docker image you created on your local machine into the Google Cloud Platform registry (GCP GCR).
+cd ~/exercises/REST-API-starter
+docker build . -t gcr.io/training-325404/gcp-restapp-neil-image:v1
+docker push gcr.io/training-325404/gcp-restapp-neil-image:v1
+
+#Get error: unauthorized: You don't have the needed permissions to perform this operation, and you may have invalid credentials.\
+ To authenticate your request, follow the steps in: https://cloud.google.com/container-registry/docs/advanced-authentication
+#Authorise
+gcloud auth login
+#accept
+gcloud auth configure-docker
+#accept
+docker push gcr.io/training-325404/gcp-restapp-neil-image:v1
+
+#-Use the GCP web console or command line to verify that the image is there.
+#burger -> Contaimer Registry
+
+#-Share your image’s coordinates with somebody else from your team.
+
+#-Ask them to download and run a container from that image on their local machine.

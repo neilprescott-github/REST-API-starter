@@ -1,0 +1,82 @@
+#1. Dockerisation of an application
+#Goals:
+
+#-In this stage we would like to dockerise your application created in the previous stage of the project.
+#-We want to be sure that you know how to dockerise your application and build container image locally.
+#-Exercise running your application locally in a container.
+
+#Tasks:
+#-Install Docker on your local computer.
+#No need itis installed & LBG will habve their way anyway
+#curl https://get.docker.com | sudo bash
+#sudo usermod -aG docker neil_prescott
+#Start a nrew SSH terminal
+
+#Firstly set up git
+git config --global user.email "github@ggggg.com"
+git config --global user.name "lklllll-github"
+
+git clone git@github.com:neilprescott-github/REST-API-starter.git
+#move to app foldercd 
+REST-API-starter.git
+#To allow push:
+git remote set-url origin git@github.com:neilprescott-github/REST-API-starter.git
+
+#-Create a Dockerfile for the application you created in the Sprint 1 of the project.
+####Dockerfile
+# node image
+FROM node:14-alpine
+# Create app directory
+WORKDIR /usr/src/app
+# Copy the package files into the image working directory
+COPY ./package*.json ./
+# Execute a node install command using
+RUN npm install
+# Copy the app files
+COPY ./*.js ./
+# State the listening port for the container. 
+EXPOSE 6000
+#Add pprt var
+ENV PORT=6000
+# Run 'npm start' on container start-up. This is the main process.
+ENTRYPOINT ["npm", "start"]
+####end
+
+#-Build a Docker image of your application locally.
+docker build -t restapp-neil-image:v1 .
+
+
+#-Run your application image locally using Docker to verify that your Dockerfile is correct.
+cd ~/REST-API-starter/
+#set PORT env var
+export PORT=6000
+#npm start
+#with logs detached (-t)
+docker run -d -p 6000:6000 restapp-neil-image:v1
+
+export NODE_PORT=6000
+export NODE_IP=localhost
+#POST (Create)
+curl -s -H "Content-Type:application/json" \
+ -X POST \
+ http://${NODE_IP}:${NODE_PORT}/product/create \
+ -d'{"name":"Name", "description": "description", "price": 25.99}'
+
+curl -s -H "Content-Type:application/json" \
+ -X POST \
+ http://${NODE_IP}:${NODE_PORT}/product/create \
+ -d'{"name":"Name 2", "description": "description 2", "price": 0.99}'
+
+#Get all
+curl -s -X GET http://${NODE_IP}:${NODE_PORT}/product/read
+
+#Get one (replace last _id with an ID of an existing record):
+curl -s -X GET http://${NODE_IP}:${NODE_PORT}/product/read/_id
+
+#Update (replace last _id with an ID of an existing record):
+curl -s -H "Content-Type:application/json" \
+ -d '{"name":"new name", "description":"new description", "price":99.99}' \
+ -X PUT http://${NODE_IP}:${NODE_PORT}/product/update/_id
+
+#Remove (replace last _id with an ID of an existing record):
+curl -s -X DELETE http://${NODE_IP}:${NODE_PORT}/product/delete/_id

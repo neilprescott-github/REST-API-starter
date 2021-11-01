@@ -1,0 +1,15 @@
+#6. Logging into GCP web console and checking current billing status
+#Goals:
+#-Understand how to access the GCP web console.
+#-Verify how much money you have spent already on your GCP account.
+
+#Tasks:
+#-Use your web browser and Google credentials to log into your GCP account.
+https://console.cloud.google.com/compute/instances?project=training-325404
+
+#-Navigate to the GCP dashboard and see how much money you have spent on the GCP services so far.
+#from maimn page select the bolling link in the billing tile
+https://console.cloud.google.com/billing/01B920-D84660-A19213/reports;grouping=GROUP_BY_SKU;projects=training-325404?project=training-325404&cloudshell=true
+
+#-Go to the billing service and find a billing forecast so you can control your GCP spending.
+#On the same page - -forecast is at the top

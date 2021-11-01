@@ -1,0 +1,141 @@
+#4. Setting up Jenkins CI pipeline
+#Goals:
+#-Demonstrate how to install Jenkins server.
+#-Understand how to set up Jenkins CI pipeline.
+#-Know how to configure your CI pipeline to verify that your project can be successfully built on every Git commit.
+
+#Tasks:
+#-Download and install a Jenkins server on your local machine.
+#Try using a docker image
+####****Jenkins dopes not work well in containers - it needs a dedicated app so use the VM that we built
+#Now using existing Jenkins server so skipped the below up to #************************Not skipping this
+
+####jenkins_install.sh
+#!/bin/bash
+if type apt > /dev/null; then
+    pkg_mgr=apt
+    java="openjdk-8-jre"
+elif type yum /dev/null; then
+    pkg_mgr=yum
+    java="java"
+fi
+echo "updating and installing dependencies"
+sudo ${pkg_mgr} update
+sudo ${pkg_mgr} install -y ${java} wget git > /dev/null
+echo "configuring jenkins user"
+sudo useradd -m -s /bin/bash jenkins
+echo "downloading latest jenkins WAR"
+sudo su - jenkins -c "curl -L https://updates.jenkins-ci.org/latest/jenkins.war --output jenkins.war"
+echo "setting up jenkins service"
+sudo tee /etc/systemd/system/jenkins.service << EOF > /dev/null
+[Unit]
+Description=Jenkins Server
+
+[Service]
+User=jenkins
+WorkingDirectory=/home/jenkins
+ExecStart=/usr/bin/java -jar /home/jenkins/jenkins.war
+
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl daemon-reload
+sudo systemctl enable jenkins
+sudo systemctl restart jenkins
+sudo su - jenkins << EOF
+until [ -f .jenkins/secrets/initialAdminPassword ]; do
+    sleep 1
+    echo "waiting for initial admin password"
+done
+until [[ -n "\$(cat  .jenkins/secrets/initialAdminPassword)" ]]; do
+    sleep 1
+    echo "waiting for initial admin password"
+done
+echo "initial admin password: \$(cat .jenkins/secrets/initialAdminPassword)"
+EOF
+####end
+
+#Then use this name to cat the password (change the pod name to that from above)
+kubectl exec --stdin --tty jenkins-deployment-787ffd8565-nqhdz -- cat /var/jenkins_home/secrets/initialAdminPassword
+#kljgfdpkjdfkvhdfjx,fgklhxkjxvhfghk
+
+#Go to the external URL and us ethe poassword form the cat command above
+#Select default
+#username:neilprescott
+#password:
+#full name:Neil Prescott
+#email-address:jenkins.lbg.tutorial@ggggg.com
+#then gives:
+#Jenkins URL: http://35.228.221.219/
+
+#-Initialize a basic Jenkins configuration.
+#done above
+
+#************************Not skipping this
+#Check Jenkoins is running
+sudo systemctl status jenkins
+#If not start it
+sudo systemctl start jenkins
+
+#-Create an SCM pipeline polling latest changes from your Git server.
+#webhook added to GitHub:http://35.228.221.219/github-webhook/
+#content to application/json
+#Added URL for project into pipeline: https://github.com/neilprescott-github/REST-API-starter.git
+
+#-Configure your pipeline to run tests and build an application on every Git commit.
+#Added Jenkinsfile
+####Jenkinsfile
+pipeline{
+        agent any
+        stages{
+          stage('Install'){
+                steps{
+                    sh "npm install"
+                }
+            }
+            stage('Test'){
+                steps{
+                    sh "npm test"
+                }
+            }
+            stage('Build'){
+                steps{
+                    sh "npm build ."
+                }
+            }
+        }
+####end
+
+###**** OR using freestyle add the above commands to the shell in the build step
+
+#****On the Jenkins server****
+#Add permissions for Jenkins user
+#Add execute
+chmod ug+x ~/exercises/REST-API-starter/node_modules/.bin/*
+#Add jenkins user to group
+sudo usermod -a -G neil_prescott jenkins
+
+#-Introduce a documentation change to your project and push that change into the Git repository.
+#Create branch
+git checkout -b feature-1
+#Modify README.md and push to test 
+echo "\n#New line added to test SCM pipeline automation on: "$(date)"\n" >> ~/exercises/REST-API-starter/README.md
+#Now push to git
+
+#Now add...
+git add --all
+#...then commit
+git commit -m "NP: Added line to README.md to test SCM pipeline automation"
+
+#now push
+#git push
+git push --set-upstream origin feature-1
+
+#Go to git hub and create pull request and accept changes
+#Delete the branch
+#first move off the branch
+git checkout main
+#then delete it
+git branch -d feature-1
+
+#-Verify that Jenkins successfully pulled the changes and executed your pipeline as expected.
