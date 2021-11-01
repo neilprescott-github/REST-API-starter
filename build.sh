@@ -20,7 +20,7 @@ cd $dir || handleError "change directory failed" ${PIPESTATUS[0]}
 
 npm install || handleError "NPM install failed" ${PIPESTATUS[0]}
 
-npm build ${dir} || handleError "NPM Build failed" ${PIPESTATUS[0]}
+#npm run build ${dir} || handleError "NPM Build failed" ${PIPESTATUS[0]}
 
 
 #-Build Docker image of your application.
