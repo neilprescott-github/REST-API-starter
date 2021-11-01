@@ -6,7 +6,7 @@ set -e
 handleError() {
 	msg=$1
 	rc=$2
-	echo "ERROR detected - message: '${msg}' code i{$ra}c"
+	echo "ERROR detected - message: '${msg}' code is {$ra}"
 	exit $rc
 }
 
